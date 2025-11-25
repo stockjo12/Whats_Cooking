@@ -25,17 +25,18 @@ test <- read_file("test.json") |>
 ### FEATURE ENGINEERING ###
 #Making Original Recipe
 cooking_recipe <- recipe(cuisine ~ ingredients, data = train) |>
+  step_mutate(num_ingredients = str_count(ingredients, "\\S+")) |>
   step_tokenize(ingredients) |>
   step_tfidf(ingredients) 
-prep <- prep(cooking_recipe)
-juiced <- juice(prep)
+# prep <- prep(cooking_recipe)
+# juiced <- juice(prep)
 
 ### WORK FLOW ###
 #Naive Bayes Model
 #Defining Model
 xgb_model <- boost_tree(
   mode = "classification",
-  trees = 100,
+  trees = 250,
   tree_depth = 6,
   learn_rate = 0.1
 ) |>
@@ -63,4 +64,4 @@ kaggle_xgb <- xgb_pred |>
   )
 
 #Saving CSV File
-vroom_write(kaggle_xgb, file = "./XGB_Test.csv", delim = ",")
+vroom_write(kaggle_xgb, file = "./XGB_Test3.csv", delim = ",")
